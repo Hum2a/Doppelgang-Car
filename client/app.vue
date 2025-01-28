@@ -1,0 +1,13 @@
+<template>
+  <NuxtLayout>
+    <NuxtPage />
+  </NuxtLayout>
+</template>
+
+<style>
+/* Add global styles here if needed */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+</style>

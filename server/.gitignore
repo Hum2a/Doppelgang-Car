@@ -1,0 +1,75 @@
+# Byte-compiled / optimized / compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Virtual environment directories
+venv/
+env/
+ENV/
+.venv/
+.ENV/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# Logs and debugging
+*.log
+*.out
+*.err
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# IDE-specific files
+.vscode/
+.idea/
+*.iml
+
+# Test and coverage reports
+.coverage
+*.cover
+coverage.xml
+*.py,cover
+
+# Build artifacts
+*.egg-info/
+*.egg
+*.manifest
+*.spec
+
+# Distribution / Packaging
+dist/
+build/
+*.wheel
+
+# Cache
+*.cache
+*.mypy_cache/
+*.pytest_cache/
+*.pdm-cache/
+.cache/
+
+# PyInstaller
+*.spec
+
+# Pylint
+pylint.log
+
+# Local configuration
+.env
+.env.*
+
+# Files created by editors
+*.bak
+*.tmp
+*.orig
+
+# Ignore uploads or other user-generated content
+uploads/
