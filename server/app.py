@@ -12,6 +12,8 @@ import tensorflow as tf
 import gc
 import cv2
 
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
 app = Flask(__name__)
 CORS(app)
 
@@ -37,16 +39,6 @@ CAR_DATABASE = [
     {"make": "Toyota", "model": "Corolla", "year": 2020, "age_range": (18, 60), "emotion": ["neutral"], "gender": "Neutral", "car_type": "Sedan"},
 ]
 
-
-
-# Limit TensorFlow GPU memory usage
-gpus = tf.config.experimental.list_physical_devices("GPU")
-if gpus:
-    try:
-        for gpu in gpus:
-            tf.config.experimental.set_memory_growth(gpu, True)
-    except RuntimeError as e:
-        print(f"[ERROR] GPU Memory Allocation Error: {e}")
 
 def fetch_car_data(make, model, year):
     """Fetch car data from API Ninjas Cars API."""
