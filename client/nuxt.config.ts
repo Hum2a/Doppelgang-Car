@@ -13,11 +13,12 @@ export default defineNuxtConfig({
         { name: "author", content: "Your Name or Company" },
         { property: "og:title", content: "Doppelgan-Car - Find Your Car Twin" },
         { property: "og:description", content: "Upload your image and see what car suits you best." },
-        { property: "og:image", content: "/Doppelgan-Car-preview.png" },
+        { property: "og:image", content: "/Doppelgan-Car.png" },
         { property: "og:type", content: "website" }
       ],
       link: [
-        { rel: "icon", type: "image/png", href: "/favicon.png" } // Change favicon
+        { rel: "icon", type: "image/png", href: "/favicon.ico" }, // Change favicon
+        { rel: "apple-touch-icon", href: "/favicon.ico" } // Apple devices
       ]
     }
   }
