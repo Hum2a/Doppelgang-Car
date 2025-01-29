@@ -18,7 +18,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Initialize Redis
-redis_client = redis.StrictRedis(host='localhost', port=6379, decode_responses=True)
+# redis_client = redis.StrictRedis(host='localhost', port=6379, decode_responses=True)
 
 # API Ninjas Cars API key
 API_KEY = "ZxumjjS1ID9tk21k34zCZQ==AlUzWWFvPEaruyWL"
