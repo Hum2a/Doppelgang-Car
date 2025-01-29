@@ -2,7 +2,7 @@
   <div class="container">
     <!-- Hero Section -->
     <div class="hero fade-in">
-      <h1 class="title">CarClone 🚗</h1>
+      <h1 class="title">Doppelgan-Car 🚗</h1>
       <p class="subtitle">Find out which car best matches your personality!</p>
     </div>
 
@@ -266,6 +266,7 @@ export default {
   animation: spin 1s linear infinite;
 }
 
+/* Styling for the car image */
 .car-image {
   width: 100%;
   max-width: 400px;
