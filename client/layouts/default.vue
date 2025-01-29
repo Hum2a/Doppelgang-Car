@@ -5,26 +5,10 @@ import { NuxtPage } from '#components';
 
 <template>
   <div>
-    <!-- Header -->
-    <header class="header">
-      <h1>CarClone</h1>
-      <nav>
-        <ul>
-          <li><nuxt-link to="/">Home</nuxt-link></li>
-          <li><nuxt-link to="/about">About</nuxt-link></li>
-        </ul>
-      </nav>
-    </header>
-
     <!-- Main Content -->
     <main>
       <NuxtPage /> <!-- This renders the page content (e.g., index.vue) -->
     </main>
-
-    <!-- Footer -->
-    <footer class="footer">
-      <p>&copy; 2025 CarClone</p>
-    </footer>
   </div>
 </template>
 
