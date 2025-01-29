@@ -6,13 +6,13 @@ import redis
 import requests
 import os
 import re
-import traceback
 import random
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 import tensorflow as tf
 import gc
 import cv2
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
 
 app = Flask(__name__)
 CORS(app)
