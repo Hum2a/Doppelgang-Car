@@ -1,14 +1,16 @@
 from concurrent.futures import ThreadPoolExecutor
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from deepface import DeepFace # type: ignore
+from deepface import DeepFace
 import redis
 import requests
 import os
 import re
 import traceback
 import random
-
+import tensorflow as tf
+import gc
+import cv2
 
 app = Flask(__name__)
 CORS(app)
@@ -35,6 +37,16 @@ CAR_DATABASE = [
     {"make": "Toyota", "model": "Corolla", "year": 2020, "age_range": (18, 60), "emotion": ["neutral"], "gender": "Neutral", "car_type": "Sedan"},
 ]
 
+
+
+# Limit TensorFlow GPU memory usage
+gpus = tf.config.experimental.list_physical_devices("GPU")
+if gpus:
+    try:
+        for gpu in gpus:
+            tf.config.experimental.set_memory_growth(gpu, True)
+    except RuntimeError as e:
+        print(f"[ERROR] GPU Memory Allocation Error: {e}")
 
 def fetch_car_data(make, model, year):
     """Fetch car data from API Ninjas Cars API."""
@@ -68,13 +80,42 @@ def fetch_car_data(make, model, year):
             "year": "Unknown",
             "error": "Failed to fetch car data"
         }
+    
+def fetch_car_image(make, model):
+    """Fetch a car image URL from Unsplash API."""
+    UNSPLASH_ACCESS_KEY = "YOUR_UNSPLASH_ACCESS_KEY"  # Replace with your Unsplash API Key
+    search_query = f"{make} {model} car"
+    url = f"https://api.unsplash.com/search/photos?query={search_query}&client_id={UNSPLASH_ACCESS_KEY}&per_page=1"
+
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        data = response.json()
+        
+        if "results" in data and len(data["results"]) > 0:
+            return data["results"][0]["urls"]["regular"]  # Return the image URL
+    except Exception as e:
+        print(f"[ERROR] Could not fetch image for {make} {model}: {e}")
+
+    return "https://via.placeholder.com/600x400.png?text=No+Image+Available"  # Default placeholder image
 
 
 def analyze_image(image_path):
     """Analyze image to extract facial features."""
     try:
-        print(f"[INFO] Analyzing image: {image_path}")
-        results = DeepFace.analyze(img_path=image_path, actions=['age', 'gender', 'emotion'])
+        print(f"[INFO] Processing image: {image_path}")
+
+        # Resize image before analysis (reduce to 256x256 for efficiency)
+        img = cv2.imread(image_path)
+        img = cv2.resize(img, (256, 256))
+        cv2.imwrite(image_path, img)  # Overwrite with smaller image
+
+        # Analyze the image using default models for age, gender, and emotion
+        results = DeepFace.analyze(
+            img_path=image_path,
+            actions=['age', 'gender', 'emotion']  # Actions determine which models are used
+        )
+
         print(f"[INFO] Facial Analysis Result: {results}")
 
         if isinstance(results, list) and len(results) > 0:
@@ -82,9 +123,9 @@ def analyze_image(image_path):
         return None
     except Exception as e:
         print(f"[ERROR] DeepFace Analysis Failed: {e}")
-        traceback.print_exc()
         return None
-    
+
+
 
 def advanced_match_car(age, gender, emotion):
     """Finds the best car match using weighted decision making."""
@@ -147,6 +188,7 @@ def map_features_to_car(age, gender, emotion):
         else:
             return "Toyota", "Camry", 2018
 
+
 @app.route('/process-photo', methods=['POST'])
 def process_photo():
     print("[INFO] Received /process-photo request")
@@ -163,6 +205,7 @@ def process_photo():
 
     # Threaded processing
     with ThreadPoolExecutor() as executor:
+        # Analyze the image
         future_analysis = executor.submit(analyze_image, file_path)
         features = future_analysis.result()
 
@@ -170,16 +213,29 @@ def process_photo():
             print("[ERROR] No face detected or analysis failed")
             return jsonify({"error": "Facial analysis failed or no faces detected"}), 500
 
+        # Extract data from features
         age = features.get('age', 30)
         gender = features.get('dominant_gender', "Man")
         emotion = features.get('dominant_emotion', "neutral")
 
         print(f"[INFO] Extracted features - Age: {age}, Gender: {gender}, Emotion: {emotion}")
 
+        # Free memory related to features
+        del features  # Delete the features variable to release memory
+        gc.collect()  # Force garbage collection to release unused memory
+
+        # Map features to a car
         make, model, year = advanced_match_car(age, gender, emotion)
 
+        # Fetch car data
         future_car_data = executor.submit(fetch_car_data, make, model, year)
         car_data = future_car_data.result()
+
+        # Fetch car image
+        image_url = fetch_car_image(make, model)
+
+        if car_data:
+            car_data["image_url"] = image_url  # Add image URL to response
 
     print(f"[INFO] Final Car Match: {car_data}")
     return jsonify({"car": car_data})
