@@ -91,19 +91,24 @@ export default {
       formData.append("file", this.selectedFile);
 
       try {
-        const response = await fetch("https://doppelgang-car-server.onrender.com/process-photo", {
+        // Use environment variable for API URL, with fallback to localhost
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000';
+        const response = await fetch(`${apiUrl}/process-photo`, {
           method: "POST",
           body: formData,
         });
 
-        if (!response.ok) throw new Error("Something went wrong. Try again.");
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
 
         const data = await response.json();
-        if (data.error) throw new Error(data.error);
-
         this.result = data.car;
+        console.log(`Car match result: ${JSON.stringify(this.result)}`);
+        this.error = null;
       } catch (error) {
-        this.error = error.message;
+        console.error("Error uploading image:", error);
+        this.error = "Something went wrong. Please try again.";
       } finally {
         this.loading = false;
       }

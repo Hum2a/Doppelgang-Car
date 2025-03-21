@@ -101,6 +101,31 @@ The application will be available at http://localhost:3000
 4. The application matches you with a car that best represents you
 5. Details about the matched car are displayed on the screen
 
+## 🚀 Deployment
+
+### Local Development
+- Frontend: Runs on http://localhost:3000
+- Backend: Runs on http://localhost:5000
+
+### Cloud Deployment
+When deploying to cloud platforms like Render, Heroku, or AWS:
+
+1. The backend automatically binds to `0.0.0.0` and uses the `PORT` environment variable provided by the platform
+2. Make sure to set all required environment variables on your deployment platform:
+   - `API_KEY` - Your API Ninjas key
+   - `UNSPLASH_ACCESS_KEY` - Your Unsplash API key (optional)
+   - Any other configuration variables your deployment requires
+
+3. For the frontend, update the API endpoint URL to point to your deployed backend:
+   ```
+   NUXT_PUBLIC_API_URL=https://your-backend-url.com
+   ```
+
+### Troubleshooting Deployment
+- Ensure all environment variables are properly set
+- Check that the application is binding to the correct host and port
+- Verify that CORS is properly configured for your production domains
+
 ## 🔍 API Endpoints
 
 ### POST /process-photo

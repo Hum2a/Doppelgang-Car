@@ -249,4 +249,7 @@ def secure_filename(filename):
 
 if __name__ == '__main__':
     print("[INFO] Starting Flask server...")
-    app.run(debug=True)
+    # Get port from environment variable or default to 5000
+    port = int(os.environ.get("PORT", 5000))
+    # Bind to 0.0.0.0 instead of 127.0.0.1 to allow external access
+    app.run(host='0.0.0.0', port=port, debug=True)
