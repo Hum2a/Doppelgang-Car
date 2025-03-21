@@ -11,8 +11,10 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 import tensorflow as tf
 import gc
 import cv2
+from dotenv import load_dotenv
 
-
+# Load environment variables from .env file
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
@@ -20,9 +22,9 @@ CORS(app)
 # Initialize Redis
 # redis_client = redis.StrictRedis(host='localhost', port=6379, decode_responses=True)
 
-# API Ninjas Cars API key
-API_KEY = "ZxumjjS1ID9tk21k34zCZQ==AlUzWWFvPEaruyWL"
-BASE_URL = "https://api.api-ninjas.com/v1/cars"
+# API Ninjas Cars API key from environment variables
+API_KEY = os.environ.get("API_KEY")
+BASE_URL = os.environ.get("BASE_URL", "https://api.api-ninjas.com/v1/cars")
 
 # Upload folder configuration
 UPLOAD_FOLDER = 'uploads'
@@ -75,7 +77,13 @@ def fetch_car_data(make, model, year):
     
 def fetch_car_image(make, model):
     """Fetch a car image URL from Unsplash API."""
-    UNSPLASH_ACCESS_KEY = "YOUR_UNSPLASH_ACCESS_KEY"  # Replace with your Unsplash API Key
+    # Get Unsplash API key from environment variables
+    UNSPLASH_ACCESS_KEY = os.environ.get("UNSPLASH_ACCESS_KEY")
+    
+    # If no API key is provided, return default placeholder
+    if not UNSPLASH_ACCESS_KEY:
+        return "https://via.placeholder.com/600x400.png?text=No+Image+Available"
+        
     search_query = f"{make} {model} car"
     url = f"https://api.unsplash.com/search/photos?query={search_query}&client_id={UNSPLASH_ACCESS_KEY}&per_page=1"
 

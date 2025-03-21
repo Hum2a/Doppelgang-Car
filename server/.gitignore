@@ -71,5 +71,12 @@ pylint.log
 *.tmp
 *.orig
 
-# Ignore uploads or other user-generated content
-uploads/
+# Environment files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Upload directory contents
+uploads/*
+!uploads/.gitkeep
